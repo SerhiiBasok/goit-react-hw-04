@@ -1,16 +1,47 @@
-const SearchBar = () => {
+import { useState } from "react";
+import PropTypes from "prop-types";
+import toast, { Toaster } from "react-hot-toast";
+import css from "./SearchBar.module.css";
+import { GoSearch } from "react-icons/go";
+
+const SearchBar = ({ onSubmit }) => {
+  const [query, setQuery] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!/^[a-zA-Z\s]*$/.test(query.trim())) {
+      toast("Please enter valid letters only.");
+      return;
+    }
+    if (query.trim() === "") {
+      toast.error("Please enter a search query.");
+      return;
+    }
+    onSubmit(query);
+    setQuery("");
+  };
+
   return (
-    <header>
-      <form>
+    <header className={css.header}>
+      <form className={css.form} onSubmit={handleSubmit}>
         <input
           type="text"
-          autoComplete="off"
-          autoFocus
-          placeholder="Search images and photos"
+          placeholder="Search images and photos..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className={css.input}
         />
-        <button type="submit">Search</button>
+        <button type="submit" className={css.btn}>
+          <GoSearch size={20} />
+        </button>
       </form>
+      <Toaster position="top-right" />
     </header>
   );
 };
+
+SearchBar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
 export default SearchBar;
